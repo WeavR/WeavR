@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -12,31 +11,27 @@ namespace WeavR.Tasks
         public ITaskItem AssemblyPath { set; get; }
 
         [Required]
-        public string ProjectDirectory { get; set; }
+        public ITaskItem ProjectDirectory { get; set; }
 
         [Required]
-        public string References { get; set; }
+        public ITaskItem[] References { get; set; }
 
         [Required]
         public ITaskItem[] ReferenceCopyLocalPaths { get; set; }
 
         [Required]
-        public string SolutionDir { get; set; }
+        public ITaskItem SolutionDir { get; set; }
 
-        public string IntermediateDir { get; set; }
-        public string KeyFilePath { get; set; }
+        public ITaskItem IntermediateDir { get; set; }
+        public ITaskItem KeyFilePath { get; set; }
         public bool SignAssembly { get; set; }
         public string DefineConstants { get; set; }
 
         public override bool Execute()
         {
-            if (Debugger.IsAttached)
-            {
-                Console.WriteLine("Press [ENTER] to continue.");
-                Console.ReadLine();
-            }
+            Engine.Process(AssemblyPath.FullPath());
 
-            return false;
+            return true;
         }
     }
 }

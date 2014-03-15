@@ -1,75 +1,89 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
 using Microsoft.Cci;
 using Microsoft.Cci.ILToCodeModel;
+
 using Microsoft.Cci.MutableCodeModel;
 
 namespace WeavR
 {
     public class Engine
     {
-        private readonly ConcurrentDictionary<string, PdbReader> pdbReaders;
         private readonly IMetadataHost host;
 
-        public Engine()
+        private Engine(IMetadataHost host)
         {
-            pdbReaders = new ConcurrentDictionary<string, PdbReader>();
-            host = new PeReader.DefaultHost();
+            this.host = host;
         }
 
-        public void Process(string targetPath, string outpath)
+        private void AddProcessedFlag(Assembly assembly)
         {
-            Directory.CreateDirectory(outpath);
-
-            var targetAssembly = ReadAssembly(targetPath);
-
-            //targetAssembly = new QuackRewriter(host).Rewrite(targetAssembly);
-
-            WriteAssembly(targetAssembly, targetPath, outpath);
-        }
-
-        private IAssembly ReadAssembly(string targetPath)
-        {
-            var targetAssembly = (IAssembly)host.LoadUnitFrom(targetPath);
-
-            var pdbReader = GetPdbReader(targetAssembly);
-
-            var decompiled = Decompiler.GetCodeModelFromMetadataModel(host, targetAssembly, pdbReader);
-
-            return new CodeDeepCopier(host, pdbReader).Copy(decompiled);
-        }
-
-        private PdbReader GetPdbReader(IAssembly assembly)
-        {
-            string pdbFile = Path.ChangeExtension(assembly.Location, ".pdb");
-            return pdbReaders.GetOrAdd(pdbFile, pdbf =>
-                File.Exists(pdbf)
-                ? new PdbReader(File.OpenRead(pdbf), host)
-                : null);
-        }
-
-        private void WriteAssembly(IAssembly targetAssembly, string targetPath, string outpath)
-        {
-            var pdbReader = GetPdbReader(targetAssembly);
-
-            var newAssemblyPath = Path.Combine(outpath, Path.GetFileName(targetPath));
-            var newPdbPath = Path.ChangeExtension(newAssemblyPath, ".pdb");
-
-            using (var peStream = File.Create(newAssemblyPath))
+            var processedInterface = new NamespaceTypeDefinition()
             {
-                if (pdbReader == null)
+                InternFactory = host.InternFactory,
+                ContainingUnitNamespace = assembly.UnitNamespaceRoot,
+                Name = host.NameTable.GetNameFor("ProcessedByWeavR"),
+                IsAbstract = true,
+                IsInterface = true,
+                MangleName = false
+            };
+            assembly.AllTypes.Add(processedInterface);
+            ((RootUnitNamespace)assembly.UnitNamespaceRoot).Members.Add(processedInterface);
+        }
+
+        public static void Process(string targetPath)
+        {
+            string pdbFile = Path.ChangeExtension(targetPath, ".pdb");
+
+            var newAssemblyPath = Path.GetTempFileName();
+            var newPdbPath = File.Exists(pdbFile) ? Path.GetTempFileName() : null;
+
+            if (newPdbPath != null)
+            {
+                File.Delete(newPdbPath);
+                newPdbPath = Path.ChangeExtension(newPdbPath, ".pdb");
+            }
+
+            using (var host = new PeReader.DefaultHost())
+            {
+                var targetAssembly = (IAssembly)host.LoadUnitFrom(targetPath);
+
+                using (var pdbStream = newPdbPath != null ? File.OpenRead(pdbFile) : null)
+                using (var pdbReader = newPdbPath != null ? new PdbReader(pdbStream, host) : null)
                 {
-                    PeWriter.WritePeToStream(targetAssembly, host, peStream);
-                }
-                else
-                {
-                    using (var pdbWriter = new PdbWriter(newPdbPath, pdbReader))
+                    var decompiled = Decompiler.GetCodeModelFromMetadataModel(host, targetAssembly, pdbReader);
+                    decompiled = new CodeDeepCopier(host, pdbReader).Copy(decompiled);
+
+                    // TODO modify assembly with weavers
+
+                    var engine = new Engine(host);
+                    engine.AddProcessedFlag(decompiled);
+
+                    using (var peStream = File.Create(newAssemblyPath))
                     {
-                        PeWriter.WritePeToStream(targetAssembly, host, peStream, pdbReader, pdbReader, pdbWriter);
+                        if (pdbReader == null)
+                        {
+                            PeWriter.WritePeToStream(targetAssembly, host, peStream);
+                        }
+                        else
+                        {
+                            using (var pdbWriter = new PdbWriter(newPdbPath, pdbReader))
+                            {
+                                PeWriter.WritePeToStream(targetAssembly, host, peStream, pdbReader, pdbReader, pdbWriter);
+                            }
+                        }
                     }
                 }
+            }
+
+            File.Delete(targetPath);
+            File.Move(newAssemblyPath, targetPath);
+
+            if (!string.IsNullOrEmpty(newPdbPath))
+            {
+                File.Delete(pdbFile);
+                File.Move(newPdbPath, pdbFile);
             }
         }
     }
