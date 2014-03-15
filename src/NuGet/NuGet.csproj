@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3256039F-7330-4736-9460-987760DC7FF8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <SolutionDir Condition=" '$(SolutionDir)' == '' ">..\..\</SolutionDir>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <IntermediateOutputPath>obj\Debug\</IntermediateOutputPath>
+    <ConfigurationName>Debug</ConfigurationName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <IntermediateOutputPath>obj\Release\</IntermediateOutputPath>
+    <ConfigurationName>Release</ConfigurationName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WeavR.Tasks\WeavR.Tasks.csproj">
+      <Project>{3f6bc6f8-089c-4444-a724-990a018dc848}</Project>
+      <Name>WeavR.Tasks</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WeavR\WeavR.csproj">
+      <Project>{5b822908-9a52-4c81-9c8b-2fa0470ccba3}</Project>
+      <Name>WeavR</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BuildFiles Include="WeavR.targets" />
+  </ItemGroup>
+  <ItemGroup>
+    <NuSpecFiles Include="WeavR.nuspec" />
+  </ItemGroup>
+  <Target Name="Clean">
+    <ItemGroup>
+      <FilesToClean Include="$(OutputPath)**\*.*" />
+      <FilesToClean Include="$(IntermediateOutputPath)**\*.*" />
+    </ItemGroup>
+    <Delete Files="@(FilesToClean)" />
+  </Target>
+  <Target Name="Build" DependsOnTargets="NuGetBuild" />
+  <Target Name="Rebuild" DependsOnTargets="Clean;Build" />
+  <UsingTask TaskName="PepitaPackage.CreatePackageTask" AssemblyFile="$(SolutionDir)tools\PepitaPackage.dll" />
+  <Target Name="NuGetBuild">
+    <ItemGroup>
+      <NuGetFiles Include="$(SolutionDir)src\WeavR\bin\$(ConfigurationName)\*" Exclude="$(SolutionDir)src\WeavR\bin\$(ConfigurationName)\*.vshost.*" />
+      <NuGetFiles Include="$(SolutionDir)src\WeavR.Tasks\bin\$(ConfigurationName)\*" Exclude="$(SolutionDir)src\WeavR.Tasks\bin\$(ConfigurationName)\*.vshost.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(NuGetFiles)" DestinationFolder="$(IntermediateOutputPath)nuget" />
+    <Copy SourceFiles="@(NuSpecFiles)" DestinationFolder="$(IntermediateOutputPath)nuget" />
+    <Copy SourceFiles="@(BuildFiles)" DestinationFolder="$(IntermediateOutputPath)nuget\build" />
+    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(IntermediateOutputPath)nuget" MetadataAssembly="$(SolutionDir)src\WeavR\bin\$(ConfigurationName)\WeavR.exe" TargetDir="$(OutputPath)" />
+  </Target>
+</Project>
