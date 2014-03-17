@@ -6,10 +6,6 @@
     <ProjectGuid>{3256039F-7330-4736-9460-987760DC7FF8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <SolutionDir Condition=" '$(SolutionDir)' == '' ">..\..\</SolutionDir>
-    <StartAction>Program</StartAction>
-    <StartWorkingDirectory>..\..\..\SampleProject\</StartWorkingDirectory>
-    <StartProgram>$(MSBuildBinPath)\MSBuild.exe</StartProgram>
-    <StartArguments>/t:Rebuild SampleProject.csproj</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
