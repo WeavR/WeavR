@@ -67,10 +67,19 @@
   </Target>
   <UsingTask TaskName="PepitaPackage.CreatePackageTask" AssemblyFile="$(SolutionDir)tools\PepitaPackage.dll" />
   <Target Name="AfterBuild">
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(OutputPath)" MetadataAssembly="$(OutputPath)$(AssemblyName).dll" TargetDir="$(OutputPath)nuget" />
     <ItemGroup>
-      <Nupkgs Include="$(OutputPath)nuget\*.nupkg" />
+      <NuGetFiles Include="$(OutputPath)*.nuspec" />
+      <LibFiles Include="$(OutputPath)*.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(NuGetFiles)" DestinationFolder="$(IntermediateOutputPath)nuget" />
+    <Copy SourceFiles="@(LibFiles)" DestinationFolder="$(IntermediateOutputPath)nuget\lib" />
+    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(IntermediateOutputPath)nuget" MetadataAssembly="$(OutputPath)$(AssemblyName).dll" TargetDir="$(OutputPath)" />
+    <ItemGroup>
+      <Nupkgs Include="$(OutputPath)*.nupkg" />
     </ItemGroup>
     <Copy SourceFiles="@(Nupkgs)" DestinationFolder="$(SolutionDir)output" />
+    <WriteLinesToFile File="$(IntermediateOutputPath)$(MSBuildProjectFile).FileListAbsolute.txt" Lines="@(NuGetFiles->'$(MSBuildProjectDirectory)\$(IntermediateOutputPath)nuget\%(Filename)%(Extension)')" />
+    <WriteLinesToFile File="$(IntermediateOutputPath)$(MSBuildProjectFile).FileListAbsolute.txt" Lines="@(LibFiles->'$(MSBuildProjectDirectory)\$(IntermediateOutputPath)nuget\lib\%(Filename)%(Extension)')" />
+    <WriteLinesToFile File="$(IntermediateOutputPath)$(MSBuildProjectFile).FileListAbsolute.txt" Lines="@(Nupkgs->'$(MSBuildProjectDirectory)\$(OutputPath)%(Filename)%(Extension)')" />
   </Target>
 </Project>
