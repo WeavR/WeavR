@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using Microsoft.Cci;
 using Microsoft.Cci.ILToCodeModel;
-
 using Microsoft.Cci.MutableCodeModel;
 
 namespace WeavR
@@ -15,6 +14,19 @@ namespace WeavR
         private Engine(IMetadataHost host)
         {
             this.host = host;
+        }
+
+        private void Process(Assembly assembly)
+        {
+            if (assembly.AllTypes.Any(t => t.Name.Value == "ProcessedByWeavR"))
+            {
+                // LOG
+                return;
+            }
+
+            // TODO modify assembly with weavers
+
+            AddProcessedFlag(assembly);
         }
 
         private void AddProcessedFlag(Assembly assembly)
@@ -32,18 +44,14 @@ namespace WeavR
             ((RootUnitNamespace)assembly.UnitNamespaceRoot).Members.Add(processedInterface);
         }
 
-        public static void Process(string targetPath)
+        public static void Process(string targetPath, string tempFolder = null)
         {
+            tempFolder = tempFolder ?? Path.GetTempPath();
+
             string pdbFile = Path.ChangeExtension(targetPath, ".pdb");
 
-            var newAssemblyPath = Path.GetTempFileName();
-            var newPdbPath = File.Exists(pdbFile) ? Path.GetTempFileName() : null;
-
-            if (newPdbPath != null)
-            {
-                File.Delete(newPdbPath);
-                newPdbPath = Path.ChangeExtension(newPdbPath, ".pdb");
-            }
+            var newAssemblyPath = Path.Combine(tempFolder, String.Format("{0}.weavr{1}", Path.GetFileNameWithoutExtension(targetPath), Path.GetExtension(targetPath)));
+            var newPdbPath = File.Exists(pdbFile) ? Path.ChangeExtension(newAssemblyPath, ".pdb") : null;
 
             using (var host = new PeReader.DefaultHost())
             {
@@ -55,10 +63,8 @@ namespace WeavR
                     var decompiled = Decompiler.GetCodeModelFromMetadataModel(host, targetAssembly, pdbReader);
                     decompiled = new CodeDeepCopier(host, pdbReader).Copy(decompiled);
 
-                    // TODO modify assembly with weavers
-
                     var engine = new Engine(host);
-                    engine.AddProcessedFlag(decompiled);
+                    engine.Process(decompiled);
 
                     using (var peStream = File.Create(newAssemblyPath))
                     {

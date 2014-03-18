@@ -29,7 +29,7 @@ namespace WeavR.Tasks
 
         public override bool Execute()
         {
-            Engine.Process(AssemblyPath.FullPath());
+            Engine.Process(AssemblyPath.FullPath(), IntermediateDir.FullPath());
 
             return true;
         }

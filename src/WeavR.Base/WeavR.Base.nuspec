@@ -1,0 +1,18 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata minClientVersion="2.8">
+    <id>WeavR.Base</id>
+    <version>$version$</version>
+    <title>WeavR Base</title>
+    <authors>Cameron MacFarland, Simon Cropp</authors>
+    <owners>Cameron MacFarland, Simon Cropp</owners>
+    <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
+    <projectUrl>http://github.com/WeavR/WeavR</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <iconUrl>https://raw.github.com/WeavR/WeavR/master/icons/package_icon.png</iconUrl>
+    <description>Aspect weaver for .net assemblies base classes and helpers.</description>
+    <summary />
+    <language>en-AU</language>
+    <tags>ILWeaving, AOP</tags>
+  </metadata>
+</package>
