@@ -45,6 +45,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeavR.Tasks.Tests", "src\We
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeavR.Base", "src\WeavR.Base\WeavR.Base.csproj", "{FE2F9D70-5FE1-431A-9944-FE9367A544E5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeavR.Common", "src\WeavR.Common\WeavR.Common.csproj", "{9EDB8911-588C-4E85-A083-DAF7D7D4C3B5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		CompilerOnly|Any CPU = CompilerOnly|Any CPU
@@ -234,6 +236,16 @@ Global
 		{FE2F9D70-5FE1-431A-9944-FE9367A544E5}.NightlyRelease|Any CPU.Build.0 = Release|Any CPU
 		{FE2F9D70-5FE1-431A-9944-FE9367A544E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE2F9D70-5FE1-431A-9944-FE9367A544E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EDB8911-588C-4E85-A083-DAF7D7D4C3B5}.CompilerOnly|Any CPU.ActiveCfg = Release|Any CPU
+		{9EDB8911-588C-4E85-A083-DAF7D7D4C3B5}.CompilerOnly|Any CPU.Build.0 = Release|Any CPU
+		{9EDB8911-588C-4E85-A083-DAF7D7D4C3B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EDB8911-588C-4E85-A083-DAF7D7D4C3B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EDB8911-588C-4E85-A083-DAF7D7D4C3B5}.NightlyDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EDB8911-588C-4E85-A083-DAF7D7D4C3B5}.NightlyDebug|Any CPU.Build.0 = Debug|Any CPU
+		{9EDB8911-588C-4E85-A083-DAF7D7D4C3B5}.NightlyRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{9EDB8911-588C-4E85-A083-DAF7D7D4C3B5}.NightlyRelease|Any CPU.Build.0 = Release|Any CPU
+		{9EDB8911-588C-4E85-A083-DAF7D7D4C3B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EDB8911-588C-4E85-A083-DAF7D7D4C3B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

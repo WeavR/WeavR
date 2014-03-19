@@ -4,15 +4,18 @@ using System.Linq;
 using Microsoft.Cci;
 using Microsoft.Cci.ILToCodeModel;
 using Microsoft.Cci.MutableCodeModel;
+using WeavR.Common;
 
 namespace WeavR
 {
     public class Engine
     {
         private readonly IMetadataHost host;
+        private readonly StandardMessageLogger logger;
 
-        private Engine(IMetadataHost host)
+        private Engine(StandardMessageLogger logger, IMetadataHost host)
         {
+            this.logger = logger;
             this.host = host;
         }
 
@@ -20,7 +23,7 @@ namespace WeavR
         {
             if (assembly.AllTypes.Any(t => t.Name.Value == "ProcessedByWeavR"))
             {
-                // LOG
+                logger.LogAlreadyProcessedMessage();
                 return;
             }
 
@@ -44,7 +47,7 @@ namespace WeavR
             ((RootUnitNamespace)assembly.UnitNamespaceRoot).Members.Add(processedInterface);
         }
 
-        public static void Process(string targetPath, string tempFolder = null)
+        public static void Process(StandardMessageLogger logger, string targetPath, string tempFolder = null)
         {
             tempFolder = tempFolder ?? Path.GetTempPath();
 
@@ -63,20 +66,20 @@ namespace WeavR
                     var decompiled = Decompiler.GetCodeModelFromMetadataModel(host, targetAssembly, pdbReader);
                     decompiled = new CodeDeepCopier(host, pdbReader).Copy(decompiled);
 
-                    var engine = new Engine(host);
+                    var engine = new Engine(logger, host);
                     engine.Process(decompiled);
 
                     using (var peStream = File.Create(newAssemblyPath))
                     {
                         if (pdbReader == null)
                         {
-                            PeWriter.WritePeToStream(targetAssembly, host, peStream);
+                            PeWriter.WritePeToStream(decompiled, host, peStream);
                         }
                         else
                         {
                             using (var pdbWriter = new PdbWriter(newPdbPath, pdbReader))
                             {
-                                PeWriter.WritePeToStream(targetAssembly, host, peStream, pdbReader, pdbReader, pdbWriter);
+                                PeWriter.WritePeToStream(decompiled, host, peStream, pdbReader, pdbReader, pdbWriter);
                             }
                         }
                     }

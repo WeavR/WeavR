@@ -41,9 +41,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ColourConsoleLogger.cs" />
+    <Compile Include="ConsoleLogger.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StringLogger.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -101,6 +104,10 @@
     <ProjectReference Include="..\..\cci\metadata\Sources\SourceModel\SourceModel.csproj">
       <Project>{4b0054fd-124a-4037-9965-bdb55e6bf389}</Project>
       <Name>SourceModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WeavR.Common\WeavR.Common.csproj">
+      <Project>{9edb8911-588c-4e85-a083-daf7d7d4c3b5}</Project>
+      <Name>WeavR.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

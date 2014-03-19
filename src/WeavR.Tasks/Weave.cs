@@ -2,6 +2,7 @@
 using System.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using WeavR.Common;
 
 namespace WeavR.Tasks
 {
@@ -29,9 +30,11 @@ namespace WeavR.Tasks
 
         public override bool Execute()
         {
-            Engine.Process(AssemblyPath.FullPath(), IntermediateDir.FullPath());
+            var logger = new BuildLogger(BuildEngine);
 
-            return true;
+            Engine.Process(new StandardMessageLogger(logger), AssemblyPath.FullPath(), IntermediateDir.FullPath());
+
+            return !logger.HasLoggedError;
         }
     }
 }

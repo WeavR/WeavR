@@ -41,12 +41,12 @@
     <Reference Include="System" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\NuGet\$(OutputPath)nuget\build\WeavR.targets" Condition="Exists('..\NuGet\$(OutputPath)nuget\build\WeavR.targets')" />
+  <Import Project="..\NuGet\$(IntermediateOutputPath)nuget\build\WeavR.targets" Condition="Exists('..\NuGet\$(IntermediateOutputPath)nuget\build\WeavR.targets')" />
   <Target Name="EnsureTargetsImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references target files that are missing on this computer. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\NuGet\$(OutputPath)nuget\build\WeavR.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\NuGet\$(OutputPath)nuget\build\WeavR.targets'))" />
+    <Error Condition="!Exists('..\NuGet\$(IntermediateOutputPath)nuget\build\WeavR.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\NuGet\$(IntermediateOutputPath)nuget\build\WeavR.targets'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
