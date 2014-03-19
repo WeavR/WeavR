@@ -32,7 +32,7 @@ namespace WeavR.Tasks
         {
             var logger = new BuildLogger(BuildEngine);
 
-            Engine.Process(new StandardMessageLogger(logger), AssemblyPath.FullPath(), IntermediateDir.FullPath());
+            Engine.Process(new WeavRLogger(logger), ProjectDirectory.FullPath(), AssemblyPath.FullPath(), IntermediateDir.FullPath());
 
             return !logger.HasLoggedError;
         }

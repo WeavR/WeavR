@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 using Microsoft.Cci;
 using Microsoft.Cci.ILToCodeModel;
 using Microsoft.Cci.MutableCodeModel;
@@ -11,25 +14,79 @@ namespace WeavR
     public class Engine
     {
         private readonly IMetadataHost host;
-        private readonly StandardMessageLogger logger;
+        private readonly WeavRLogger logger;
 
-        private Engine(StandardMessageLogger logger, IMetadataHost host)
+        private Engine(WeavRLogger logger, IMetadataHost host)
         {
             this.logger = logger;
             this.host = host;
         }
 
-        private void Process(Assembly assembly)
+        private void Process(string projectDirectory, Assembly assembly)
         {
-            if (assembly.AllTypes.Any(t => t.Name.Value == "ProcessedByWeavR"))
+            logger.LogInfo("WeavR (version {0}) Executing", typeof(Engine).Assembly.GetName().Version);
+
+            var stopwatch = Stopwatch.StartNew();
+
+            try
             {
-                logger.LogAlreadyProcessedMessage();
-                return;
+                if (assembly.AllTypes.Any(t => t.Name.Value == "ProcessedByWeavR"))
+                {
+                    logger.LogWarning("Assembly already processed by WeavR.");
+                    return;
+                }
+
+                var weaversConfigs = FindWeaverConfigs(projectDirectory)
+                    .Select(s => XElement.Load(s))
+                    .SelectMany(root => root.Descendants())
+                    .ToList();
+
+                // TODO modify assembly with weavers
+
+                AddProcessedFlag(assembly);
+            }
+            catch (Exception ex)
+            {
+                logger.LogException(ex);
+            }
+            finally
+            {
+                logger.LogInfo("WeavR Finished {0}ms.", stopwatch.ElapsedMilliseconds);
+            }
+        }
+
+        public IEnumerable<string> FindWeaverConfigs(string projectDirectory)
+        {
+            var foundConfigs = new List<string>();
+
+            //var fodyDirConfigFilePath = Path.Combine(AssemblyLocation.CurrentDirectory(), "WeaversConfig.xml");
+            //if (File.Exists(fodyDirConfigFilePath))
+            //{
+            //    ConfigFiles.Add(fodyDirConfigFilePath);
+            //    Logger.LogInfo(string.Format("Found path to weavers file '{0}'.", fodyDirConfigFilePath));
+            //}
+
+            //var solutionConfigFilePath = Path.Combine(SolutionDirectoryPath, "WeaversConfig.xml");
+            //if (File.Exists(solutionConfigFilePath))
+            //{
+            //    ConfigFiles.Add(solutionConfigFilePath);
+            //    Logger.LogInfo(string.Format("Found path to weavers file '{0}'.", solutionConfigFilePath));
+            //}
+
+            var projectConfigFilePath = Path.Combine(projectDirectory, "WeaversConfig.xml");
+            if (File.Exists(projectConfigFilePath))
+            {
+                foundConfigs.Add(projectConfigFilePath);
+                logger.LogInfo("Found path to weavers file '{0}'.", projectConfigFilePath);
             }
 
-            // TODO modify assembly with weavers
+            if (foundConfigs.Count == 0)
+            {
+                var pathsSearched = string.Join("', '", projectConfigFilePath);
+                logger.LogWarning("Could not find path to weavers file. Searched '{0}'.", pathsSearched);
+            }
 
-            AddProcessedFlag(assembly);
+            return foundConfigs;
         }
 
         private void AddProcessedFlag(Assembly assembly)
@@ -47,8 +104,20 @@ namespace WeavR
             ((RootUnitNamespace)assembly.UnitNamespaceRoot).Members.Add(processedInterface);
         }
 
-        public static void Process(StandardMessageLogger logger, string targetPath, string tempFolder = null)
+        public static void Process(WeavRLogger logger, string projectDirectory, string targetPath, string tempFolder = null)
         {
+            if (!File.Exists(targetPath))
+            {
+                logger.LogError("Assembly '{0}' not found.", targetPath);
+                return;
+            }
+
+            if (!Directory.Exists(projectDirectory))
+            {
+                logger.LogError("Project directory '{0}' not found.", projectDirectory);
+                return;
+            }
+
             tempFolder = tempFolder ?? Path.GetTempPath();
 
             string pdbFile = Path.ChangeExtension(targetPath, ".pdb");
@@ -67,7 +136,7 @@ namespace WeavR
                     decompiled = new CodeDeepCopier(host, pdbReader).Copy(decompiled);
 
                     var engine = new Engine(logger, host);
-                    engine.Process(decompiled);
+                    engine.Process(projectDirectory, decompiled);
 
                     using (var peStream = File.Create(newAssemblyPath))
                     {

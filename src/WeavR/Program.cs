@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using WeavR.Common;
 
@@ -7,25 +6,22 @@ namespace WeavR
 {
     internal class Program
     {
+        internal class Args
+        {
+            public string TargetAssembly { get; set; }
+        }
+
         private static void Main(string[] args)
         {
-            var logger = new StandardMessageLogger(new ColourConsoleLogger());
+            var logger = new WeavRLogger(new ColourConsoleLogger());
 
-            if (args == null || args.Length == 0)
+            if (args == null || args.Length < 2)
             {
-                logger.LogAssemblyNotProvided();
+                logger.LogError("WeavR argument not provided.");
                 return;
             }
 
-            var file = new FileInfo(args[0]);
-
-            if (!file.Exists)
-            {
-                logger.LogAssemblyNotFound(file.FullName);
-                return;
-            }
-
-            Engine.Process(logger, file.FullName);
+            Engine.Process(logger, args[1], args[0]);
         }
     }
 }
