@@ -32,6 +32,78 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Cci.Analysis.AnalysisUtilities">
+      <HintPath>..\..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.Analysis.AnalysisUtilities.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.Analysis.ControlAndDataFlowGraph">
+      <HintPath>..\..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.Analysis.ControlAndDataFlowGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.AstsProjectedAsCodeModel">
+      <HintPath>..\..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.AstsProjectedAsCodeModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.CodeModel, Version=1.0.13.1, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.CodeModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.CodeModelToIL, Version=1.0.13.1, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.CodeModelToIL.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.ContractExtractor">
+      <HintPath>..\..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.ContractExtractor.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.CSharpSourceEmitter">
+      <HintPath>..\..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.CSharpSourceEmitter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.ILGenerator, Version=1.0.13.1, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.ILGenerator.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.MetadataHelper, Version=1.0.13.1, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.MetadataHelper.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.MetadataModel, Version=1.0.13.1, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.MetadataModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.MutableCodeModel, Version=1.0.13.1, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.MutableCodeModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.MutableMetadataModel, Version=1.0.13.1, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.MutableMetadataModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.NewILToCodeModel">
+      <HintPath>..\..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.NewILToCodeModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.PdbReader, Version=1.0.13.1, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.PdbReader.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.PdbWriter, Version=1.0.13.1, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.PdbWriter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.PeReader, Version=1.0.13.1, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.PeReader.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.PeWriter, Version=1.0.13.1, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.PeWriter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.ReflectionEmitter">
+      <HintPath>..\..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.ReflectionEmitter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.SourceEmitter">
+      <HintPath>..\..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.SourceEmitter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Cci.SourceModel, Version=1.0.13.1, Culture=neutral, PublicKeyToken=736440c9b414ea16, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\CCI.Unofficial.1.0.13.1\lib\net40\Microsoft.Cci.SourceModel.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -57,58 +129,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\cci\ast\CodeModelToIL\CodeModelToIL.csproj">
-      <Project>{ceb76ea1-a168-49b0-a410-2c4195fee86f}</Project>
-      <Name>CodeModelToIL</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\cci\ast\CodeModel\CodeModel.csproj">
-      <Project>{035fea7f-0d36-4ae4-b694-ec45191b9af2}</Project>
-      <Name>CodeModel</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\cci\ast\ILToCodeModel\ILToCodeModel.csproj">
-      <Project>{27f2a417-b6ed-43ad-a38e-a0b6142216f6}</Project>
-      <Name>ILToCodeModel</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\cci\ast\MutableCodeModel\MutableCodeModel.csproj">
-      <Project>{319e150c-8f33-49e7-81ca-30f02f9ba90a}</Project>
-      <Name>MutableCodeModel</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\cci\metadata\Sources\ILGenerator\ILGenerator.csproj">
-      <Project>{08156c78-403a-4112-ad81-8646ac51cd2f}</Project>
-      <Name>ILGenerator</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\cci\metadata\Sources\MetadataHelper\MetadataHelper.csproj">
-      <Project>{4a34a3c5-6176-49d7-a4c5-b2b671247f8f}</Project>
-      <Name>MetadataHelper</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\cci\metadata\Sources\MetadataModel\MetadataModel.csproj">
-      <Project>{33cab640-0d03-43df-81bd-22cdc6c0a597}</Project>
-      <Name>MetadataModel</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\cci\metadata\Sources\MutableMetadataModel\MutableMetadataModel.csproj">
-      <Project>{319e151c-8f33-49e7-81c9-30f02f9ba90a}</Project>
-      <Name>MutableMetadataModel</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\cci\metadata\Sources\PdbReader\PdbReader.csproj">
-      <Project>{a6a31b03-7c3d-4de6-aa73-be88116bc40a}</Project>
-      <Name>PdbReader</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\cci\metadata\Sources\PdbWriter\PdbWriter.csproj">
-      <Project>{6d83f687-abb5-40b3-915e-ca53da0eb7f3}</Project>
-      <Name>PdbWriter</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\cci\metadata\Sources\PeReader\PeReader.csproj">
-      <Project>{34b9a0ce-df18-4cbc-8f7a-90c2b74338d5}</Project>
-      <Name>PeReader</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\cci\metadata\Sources\PeWriter\PeWriter.csproj">
-      <Project>{304a8b0b-851b-4aa6-a17d-5f87f39c5e5c}</Project>
-      <Name>PeWriter</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\cci\metadata\Sources\SourceModel\SourceModel.csproj">
-      <Project>{4b0054fd-124a-4037-9965-bdb55e6bf389}</Project>
-      <Name>SourceModel</Name>
-    </ProjectReference>
     <ProjectReference Include="..\WeavR.Base\WeavR.Base.csproj">
       <Project>{fe2f9d70-5fe1-431a-9944-fe9367a544e5}</Project>
       <Name>WeavR.Base</Name>
