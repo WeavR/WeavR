@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 
-namespace WeavR
+namespace WeavR.Logging
 {
     public class ConsoleLogger : StringLogger
     {

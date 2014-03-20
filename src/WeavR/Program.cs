@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using WeavR.Common;
+using WeavR.Logging;
 
 namespace WeavR
 {
@@ -13,7 +14,7 @@ namespace WeavR
 
         private static void Main(string[] args)
         {
-            var logger = new WeavRLogger(new ColourConsoleLogger());
+            var logger = new LoggerContext(new ColourConsoleLogger(), "WeavR");
 
             if (args == null || args.Length < 2)
             {

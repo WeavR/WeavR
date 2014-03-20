@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Linq;
 using WeavR.Common;
 
-namespace WeavR
+namespace WeavR.Logging
 {
     public abstract class StringLogger : Logger
     {

@@ -8,15 +8,16 @@ using Microsoft.Cci;
 using Microsoft.Cci.ILToCodeModel;
 using Microsoft.Cci.MutableCodeModel;
 using WeavR.Common;
+using WeavR.Mutators;
 
 namespace WeavR
 {
     public class Engine
     {
         private readonly IMetadataHost host;
-        private readonly WeavRLogger logger;
+        private readonly LoggerContext logger;
 
-        private Engine(WeavRLogger logger, IMetadataHost host)
+        private Engine(LoggerContext logger, IMetadataHost host)
         {
             this.logger = logger;
             this.host = host;
@@ -41,9 +42,25 @@ namespace WeavR
                     .SelectMany(root => root.Descendants())
                     .ToList();
 
-                // TODO modify assembly with weavers
+                var mutators = new List<Mutator>();
+                //mutators.AddRange(FindWeavers().Select(w => new WeaverMutator<object>(w)));
+                mutators.Add(new ProcessedFlagMutator());
 
-                AddProcessedFlag(assembly);
+                foreach (var mutator in mutators)
+                {
+                    mutator.Host = host;
+                    mutator.Logger = logger.CreateSubContext(mutator.Name);
+
+                    var weaverMutator = mutator as WeaverMutator;
+                    if (weaverMutator != null)
+                    {
+                        var config = weaversConfigs.FirstOrDefault(c => c.Name == weaverMutator.Name);
+                        if (config != null)
+                            weaverMutator.Configure(config);
+                    }
+
+                    mutator.Mutate(assembly);
+                }
             }
             catch (Exception ex)
             {
@@ -89,22 +106,12 @@ namespace WeavR
             return foundConfigs;
         }
 
-        private void AddProcessedFlag(Assembly assembly)
+        public IEnumerable<string> FindWeavers()
         {
-            var processedInterface = new NamespaceTypeDefinition()
-            {
-                InternFactory = host.InternFactory,
-                ContainingUnitNamespace = assembly.UnitNamespaceRoot,
-                Name = host.NameTable.GetNameFor("ProcessedByWeavR"),
-                IsAbstract = true,
-                IsInterface = true,
-                MangleName = false
-            };
-            assembly.AllTypes.Add(processedInterface);
-            ((RootUnitNamespace)assembly.UnitNamespaceRoot).Members.Add(processedInterface);
+            throw new System.NotImplementedException();
         }
 
-        public static void Process(WeavRLogger logger, string projectDirectory, string targetPath, string tempFolder = null)
+        public static void Process(LoggerContext logger, string projectDirectory, string targetPath, string tempFolder = null)
         {
             if (!File.Exists(targetPath))
             {

@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace WeavR
+namespace WeavR.Logging
 {
     public class ColourConsoleLogger : ConsoleLogger
     {

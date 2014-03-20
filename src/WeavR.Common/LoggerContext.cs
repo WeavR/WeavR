@@ -4,36 +4,54 @@ using System.Linq;
 
 namespace WeavR.Common
 {
-    public class WeavRLogger
+    public class LoggerContext
     {
-        private const string SENDER = "WeavR";
         private readonly Logger logger;
+        private readonly string sender;
+        private readonly string subcategory;
 
-        public WeavRLogger(Logger logger)
+        public LoggerContext(Logger logger, string sender)
         {
             this.logger = logger;
+            this.sender = sender;
+            this.subcategory = "";
         }
 
-        public Logger RawLogger { get { return logger; } }
+        private LoggerContext(Logger logger, string sender, string subcategory)
+        {
+            this.logger = logger;
+            this.sender = sender;
+            this.subcategory = subcategory;
+        }
+
+        public LoggerContext CreateSubContext(string subcategory)
+        {
+            return new LoggerContext(logger, sender, subcategory);
+        }
+
+        public void LogDebug(string message, params object[] messageArgs)
+        {
+            logger.LogInfo(subcategory, "", "", 0, 0, 0, 0, message, "", sender, MessageImportance.Low, DateTime.UtcNow, messageArgs);
+        }
 
         public void LogInfo(string message, params object[] messageArgs)
         {
-            logger.LogInfo(message, "", SENDER, MessageImportance.Normal, DateTime.UtcNow, messageArgs);
+            logger.LogInfo(subcategory, "", "", 0, 0, 0, 0, message, "", sender, MessageImportance.Normal, DateTime.UtcNow, messageArgs);
         }
 
         public void LogWarning(string message, params object[] messageArgs)
         {
-            logger.LogWarning("", "", "", 0, 0, 0, 0, message, "", SENDER, DateTime.UtcNow, messageArgs);
+            logger.LogWarning(subcategory, "", "", 0, 0, 0, 0, message, "", sender, DateTime.UtcNow, messageArgs);
         }
 
         public void LogError(string message, params object[] messageArgs)
         {
-            logger.LogError("", "", "", 0, 0, 0, 0, message, "", SENDER, DateTime.UtcNow, messageArgs);
+            logger.LogError(subcategory, "", "", 0, 0, 0, 0, message, "", sender, DateTime.UtcNow, messageArgs);
         }
 
         public void LogException(Exception ex)
         {
-            logger.LogError("", "", "", 0, 0, 0, 0, ExceptionToFriendlyString(ex), "", SENDER);
+            logger.LogError(subcategory, "", "", 0, 0, 0, 0, ExceptionToFriendlyString(ex), "", sender);
         }
 
         private string ExceptionToFriendlyString(Exception exception)
