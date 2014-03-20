@@ -58,6 +58,10 @@
       <Project>{319e151c-8f33-49e7-81c9-30f02f9ba90a}</Project>
       <Name>MutableMetadataModel</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WeavR.Common\WeavR.Common.csproj">
+      <Project>{9edb8911-588c-4e85-a083-daf7d7d4c3b5}</Project>
+      <Name>WeavR.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\packages\GitVersionTask.0.20.0\Build\GitVersionTask.targets" Condition="Exists('..\..\packages\GitVersionTask.0.20.0\Build\GitVersionTask.targets')" />

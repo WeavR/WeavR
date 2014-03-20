@@ -6,34 +6,30 @@ using WeavR.Base;
 
 namespace WeavR.Mutators
 {
-    public abstract class WeaverMutator : Mutator
+    public class WeaverMutator : Mutator
     {
-        public abstract void Configure(XElement config);
-    }
+        private readonly string assemblyName;
+        private readonly Weaver weaver;
 
-    public class WeaverMutator<T> : WeaverMutator where T : Weaver
-    {
-        private readonly T weaver;
-
-        public WeaverMutator()
+        public WeaverMutator(string assemblyName)
         {
-            // TODO Spin up weaver in new appdomain
-            weaver = Activator.CreateInstance<T>();
+            this.assemblyName = assemblyName;
+            weaver = (Weaver)Activator.CreateInstance(assemblyName, "ModuleWeaver").Unwrap();
         }
 
-        public override void Configure(XElement config)
+        public void Configure(XElement config)
         {
             weaver.Configure(config);
         }
 
         public override string Name
         {
-            get { return typeof(T).Name; }
+            get { return assemblyName; }
         }
 
         public override void Mutate(Assembly assembly)
         {
-            weaver.Process(assembly);
+            weaver.Process(Logger, assembly);
         }
     }
 }

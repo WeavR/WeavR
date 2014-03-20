@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
 using Microsoft.Cci;
 using Microsoft.Cci.ILToCodeModel;
@@ -14,6 +15,43 @@ namespace WeavR
 {
     public class Engine
     {
+        public class AssemblyDetails
+        {
+            private readonly string solutionDirectory;
+            private readonly string projectDirectory;
+            private readonly string targetPath;
+
+            public AssemblyDetails(string solutionDirectory, string projectDirectory, string targetPath)
+            {
+                this.solutionDirectory = solutionDirectory;
+                this.projectDirectory = projectDirectory;
+                this.targetPath = targetPath;
+            }
+
+            public string SolutionDirectory { get { return solutionDirectory; } }
+            public string ProjectDirectory { get { return projectDirectory; } }
+            public string TargetPath { get { return targetPath; } }
+
+            public bool Verify(LoggerContext logger)
+            {
+                var result = true;
+
+                if (!File.Exists(TargetPath))
+                {
+                    logger.LogError("Assembly '{0}' not found.", TargetPath);
+                    result = false;
+                }
+
+                if (!Directory.Exists(ProjectDirectory))
+                {
+                    logger.LogError("Project directory '{0}' not found.", ProjectDirectory);
+                    result = false;
+                }
+
+                return result;
+            }
+        }
+
         private readonly IMetadataHost host;
         private readonly LoggerContext logger;
 
@@ -23,7 +61,7 @@ namespace WeavR
             this.host = host;
         }
 
-        private void Process(string projectDirectory, Assembly assembly)
+        private void Process(AssemblyDetails assemblyDetails, Assembly assembly)
         {
             logger.LogInfo("WeavR (version {0}) Executing", typeof(Engine).Assembly.GetName().Version);
 
@@ -37,13 +75,20 @@ namespace WeavR
                     return;
                 }
 
-                var weaversConfigs = FindWeaverConfigs(projectDirectory)
+                var weaversConfigs = FindWeaverConfigs(assemblyDetails.ProjectDirectory)
                     .Select(s => XElement.Load(s))
                     .SelectMany(root => root.Descendants())
                     .ToList();
 
+                var weavers = FindWeavers(assemblyDetails.SolutionDirectory);
+
+                var weaverMutators = weaversConfigs
+                    .Select(config => new { config, weaver = weavers.FirstOrDefault(w => w.Remove(w.Length - ".WeavR.dll".Length) == config.Name) })
+                    .WhereWithActions(a => a.weaver != null, null, a => logger.LogWarning(@"Could not find a weaver named '{0}'.", a.config)) //Error?
+                    .Select(a => new WeaverMutator(a.weaver));
+
                 var mutators = new List<Mutator>();
-                //mutators.AddRange(FindWeavers().Select(w => new WeaverMutator<object>(w)));
+                mutators.AddRange(weaverMutators);
                 mutators.Add(new ProcessedFlagMutator());
 
                 foreach (var mutator in mutators)
@@ -106,35 +151,73 @@ namespace WeavR
             return foundConfigs;
         }
 
-        public IEnumerable<string> FindWeavers()
+        public IEnumerable<string> FindWeavers(string solutionDirectory)
         {
-            throw new System.NotImplementedException();
+            var directories = new List<string>();
+            directories.Add(Path.Combine(solutionDirectory, "Packages"));
+            directories.Add(Path.Combine(solutionDirectory, "Tools"));
+            directories.Add(GetPackagePath(Path.Combine(solutionDirectory, "nuget.config")));
+            directories.Add(GetPackagePath(Path.Combine(solutionDirectory, ".nuget", "nuget.config")));
+            return directories
+                .Where(s => s != null)
+                .WhereWithActions(s => Directory.Exists(s), null, s => logger.LogInfo("Skipped scanning '{0}' for weavers since it doesn't exist.", s))
+                .SelectMany(d => Directory.EnumerateFiles(d, "*.WeavR.dll", SearchOption.AllDirectories));
         }
 
-        public static void Process(LoggerContext logger, string projectDirectory, string targetPath, string tempFolder = null)
+        public static string GetPackagePath(string nugetConfigPath)
         {
-            if (!File.Exists(targetPath))
+            if (File.Exists(nugetConfigPath))
             {
-                logger.LogError("Assembly '{0}' not found.", targetPath);
-                return;
-            }
+                XDocument xDocument;
+                try
+                {
+                    xDocument = XDocument.Load(nugetConfigPath);
+                }
+                catch (XmlException)
+                {
+                    return null;
+                }
+                var repositoryPath = xDocument.Descendants("repositoryPath")
+                    .Select(x => x.Value)
+                    .FirstOrDefault(x => !string.IsNullOrWhiteSpace(x));
+                if (repositoryPath != null)
+                {
+                    return Path.Combine(Path.GetDirectoryName(nugetConfigPath), repositoryPath);
+                }
+                repositoryPath = xDocument.Descendants("add")
+                    .Where(x => (string)x.Attribute("key") == "repositoryPath")
+                    .Select(x => x.Attribute("value"))
+                    .Where(x => x != null)
+                    .Select(x => x.Value)
+                    .FirstOrDefault();
+                if (repositoryPath != null)
+                {
+                    if (repositoryPath.StartsWith("$\\"))
+                    {
+                        return repositoryPath.Replace("$", Path.Combine(Path.GetDirectoryName(nugetConfigPath)));
+                    }
 
-            if (!Directory.Exists(projectDirectory))
-            {
-                logger.LogError("Project directory '{0}' not found.", projectDirectory);
-                return;
+                    return Path.Combine(Path.GetDirectoryName(nugetConfigPath), repositoryPath);
+                }
             }
+            return null;
+        }
+
+        public static void Process(LoggerContext logger, AssemblyDetails assemblyDetails, string tempFolder = null)
+        {
+            if (!assemblyDetails.Verify(logger))
+                return;
 
             tempFolder = tempFolder ?? Path.GetTempPath();
 
-            string pdbFile = Path.ChangeExtension(targetPath, ".pdb");
+            string pdbFile = Path.ChangeExtension(assemblyDetails.TargetPath, ".pdb");
 
-            var newAssemblyPath = Path.Combine(tempFolder, String.Format("{0}.weavr{1}", Path.GetFileNameWithoutExtension(targetPath), Path.GetExtension(targetPath)));
+            var newAssemblyPath = Path.Combine(tempFolder, String.Format("{0}.weavr{1}", Path.GetFileNameWithoutExtension(assemblyDetails.TargetPath), Path.GetExtension(assemblyDetails.TargetPath)));
             var newPdbPath = File.Exists(pdbFile) ? Path.ChangeExtension(newAssemblyPath, ".pdb") : null;
 
             using (var host = new PeReader.DefaultHost())
             {
-                var targetAssembly = (IAssembly)host.LoadUnitFrom(targetPath);
+                var targetAssembly = (IAssembly)host.LoadUnitFrom(assemblyDetails.TargetPath);
 
                 using (var pdbStream = newPdbPath != null ? File.OpenRead(pdbFile) : null)
                 using (var pdbReader = newPdbPath != null ? new PdbReader(pdbStream, host) : null)
@@ -143,7 +226,7 @@ namespace WeavR
                     decompiled = new CodeDeepCopier(host, pdbReader).Copy(decompiled);
 
                     var engine = new Engine(logger, host);
-                    engine.Process(projectDirectory, decompiled);
+                    engine.Process(assemblyDetails, decompiled);
 
                     using (var peStream = File.Create(newAssemblyPath))
                     {
@@ -162,8 +245,8 @@ namespace WeavR
                 }
             }
 
-            File.Delete(targetPath);
-            File.Move(newAssemblyPath, targetPath);
+            File.Delete(assemblyDetails.TargetPath);
+            File.Move(newAssemblyPath, assemblyDetails.TargetPath);
 
             if (!string.IsNullOrEmpty(newPdbPath))
             {
