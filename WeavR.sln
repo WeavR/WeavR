@@ -10,10 +10,15 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGet", "src\NuGet\NuGet.csproj", "{3256039F-7330-4736-9460-987760DC7FF8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeavR.Tasks.Tests", "src\WeavR.Tasks.Tests\WeavR.Tasks.Tests.csproj", "{1EC9F287-590F-495E-B293-D49EF00B159F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{45D39B15-2ABD-45AF-8A77-E3CE5288F021} = {45D39B15-2ABD-45AF-8A77-E3CE5288F021}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeavR.Base", "src\WeavR.Base\WeavR.Base.csproj", "{FE2F9D70-5FE1-431A-9944-FE9367A544E5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeavR.Common", "src\WeavR.Common\WeavR.Common.csproj", "{9EDB8911-588C-4E85-A083-DAF7D7D4C3B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWeaver", "src\SampleWeaver\SampleWeaver.csproj", "{45D39B15-2ABD-45AF-8A77-E3CE5288F021}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -84,6 +89,16 @@ Global
 		{9EDB8911-588C-4E85-A083-DAF7D7D4C3B5}.NightlyRelease|Any CPU.Build.0 = Release|Any CPU
 		{9EDB8911-588C-4E85-A083-DAF7D7D4C3B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9EDB8911-588C-4E85-A083-DAF7D7D4C3B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45D39B15-2ABD-45AF-8A77-E3CE5288F021}.CompilerOnly|Any CPU.ActiveCfg = Release|Any CPU
+		{45D39B15-2ABD-45AF-8A77-E3CE5288F021}.CompilerOnly|Any CPU.Build.0 = Release|Any CPU
+		{45D39B15-2ABD-45AF-8A77-E3CE5288F021}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45D39B15-2ABD-45AF-8A77-E3CE5288F021}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45D39B15-2ABD-45AF-8A77-E3CE5288F021}.NightlyDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45D39B15-2ABD-45AF-8A77-E3CE5288F021}.NightlyDebug|Any CPU.Build.0 = Debug|Any CPU
+		{45D39B15-2ABD-45AF-8A77-E3CE5288F021}.NightlyRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{45D39B15-2ABD-45AF-8A77-E3CE5288F021}.NightlyRelease|Any CPU.Build.0 = Release|Any CPU
+		{45D39B15-2ABD-45AF-8A77-E3CE5288F021}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45D39B15-2ABD-45AF-8A77-E3CE5288F021}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

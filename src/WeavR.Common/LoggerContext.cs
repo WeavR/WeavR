@@ -24,6 +24,21 @@ namespace WeavR.Common
             this.subcategory = subcategory;
         }
 
+        public bool HasLoggedWarning
+        {
+            get { return logger.HasLoggedWarning; }
+        }
+
+        public bool HasLoggedError
+        {
+            get { return logger.HasLoggedError; }
+        }
+
+        public void Reset()
+        {
+            logger.Reset();
+        }
+
         public LoggerContext CreateSubContext(string subcategory)
         {
             return new LoggerContext(logger, sender, subcategory);
@@ -71,7 +86,7 @@ namespace WeavR.Common
                 if (exception.StackTrace != null)
                 {
                     lines.Add("StackTrace:");
-                    lines.Add(exception.StackTrace);
+                    lines.AddRange(exception.StackTrace.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries));
                 }
 
                 if (exception.Source != null)

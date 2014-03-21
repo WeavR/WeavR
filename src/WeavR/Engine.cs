@@ -83,9 +83,13 @@ namespace WeavR
                 var weavers = FindWeavers(assemblyDetails.SolutionDirectory);
 
                 var weaverMutators = weaversConfigs
-                    .Select(config => new { config, weaver = weavers.FirstOrDefault(w => w.Remove(w.Length - ".WeavR.dll".Length) == config.Name) })
-                    .WhereWithActions(a => a.weaver != null, null, a => logger.LogWarning(@"Could not find a weaver named '{0}'.", a.config)) //Error?
-                    .Select(a => new WeaverMutator(a.weaver));
+                    .Select(config => new { config, weaver = weavers.FirstOrDefault(w => Path.GetFileNameWithoutExtension(w) == config.Name.LocalName + ".WeavR") })
+                    .WhereWithActions(a => a.weaver != null, null, a => logger.LogWarning(@"Could not find a weaver named '{0}'.", a.config.Name.LocalName)) //Error?
+                    .Select(a => new WeaverMutator(logger, a.weaver))
+                    .ToList();
+
+                if (logger.HasLoggedError)
+                    return;
 
                 var mutators = new List<Mutator>();
                 mutators.AddRange(weaverMutators);

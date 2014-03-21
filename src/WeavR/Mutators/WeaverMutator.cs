@@ -1,8 +1,10 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Microsoft.Cci.MutableCodeModel;
 using WeavR.Base;
+using WeavR.Common;
 
 namespace WeavR.Mutators
 {
@@ -11,10 +13,24 @@ namespace WeavR.Mutators
         private readonly string assemblyName;
         private readonly Weaver weaver;
 
-        public WeaverMutator(string assemblyName)
+        public WeaverMutator(LoggerContext logger, string assemblyPath)
         {
-            this.assemblyName = assemblyName;
-            weaver = (Weaver)Activator.CreateInstance(assemblyName, "ModuleWeaver").Unwrap();
+            assemblyName = Path.GetFileNameWithoutExtension(assemblyPath);
+            assemblyName = assemblyName.Remove(assemblyName.Length - ".WeavR".Length);
+
+            // TODO Load in separate app domain
+            var weaverAssembly = System.Reflection.Assembly.LoadFile(assemblyPath);
+
+            // TODO Just find all types that inherit from Weaver instead.
+            var weaverType = weaverAssembly.GetType("ModuleWeaver");
+            if (weaverType == null)
+            {
+                logger.LogError("Cannot find 'ModuleWeaver' type in weaver '{0}'.", assemblyName);
+                return;
+            }
+
+            weaver = (Weaver)Activator.CreateInstance(weaverType);
+            weaver.Logger = logger.CreateSubContext(assemblyName);
         }
 
         public void Configure(XElement config)
@@ -29,7 +45,7 @@ namespace WeavR.Mutators
 
         public override void Mutate(Assembly assembly)
         {
-            weaver.Process(Logger, assembly);
+            weaver.Process(assembly);
         }
     }
 }

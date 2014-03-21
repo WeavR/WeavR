@@ -8,8 +8,10 @@ namespace WeavR.Base
 {
     public abstract class Weaver
     {
+        public LoggerContext Logger { get; set; }
+
         public abstract void Configure(XElement config);
 
-        public abstract void Process(LoggerContext logger, Assembly assembly);
+        public abstract void Process(Assembly assembly);
     }
 }
