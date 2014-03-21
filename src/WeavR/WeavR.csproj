@@ -129,10 +129,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WeavR.Base\WeavR.Base.csproj">
-      <Project>{fe2f9d70-5fe1-431a-9944-fe9367a544e5}</Project>
-      <Name>WeavR.Base</Name>
-    </ProjectReference>
     <ProjectReference Include="..\WeavR.Common\WeavR.Common.csproj">
       <Project>{9edb8911-588c-4e85-a083-daf7d7d4c3b5}</Project>
       <Name>WeavR.Common</Name>
