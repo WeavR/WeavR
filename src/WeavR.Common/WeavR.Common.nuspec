@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata minClientVersion="2.8">
     <id>WeavR.Common</id>
-    <version>$version$</version>
+    <version>0.0</version>
     <title>WeavR Common</title>
     <authors>Cameron MacFarland, Simon Cropp</authors>
     <owners>Cameron MacFarland, Simon Cropp</owners>

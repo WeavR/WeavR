@@ -119,15 +119,15 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\GitVersionTask.0.20.0\Build\GitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\GitVersionTask.0.20.0\Build\GitVersionTask.targets'))" />
   </Target>
-  <UsingTask TaskName="PepitaPackage.CreatePackageTask" AssemblyFile="$(SolutionDir)tools\PepitaPackage.dll" />
+  <UsingTask TaskName="NuCake.CreatePackage" AssemblyFile="$(SolutionDir)tools\NuCake.dll" />
   <Target Name="AfterBuild">
     <ItemGroup>
       <NuGetFiles Include="$(OutputPath)*.nuspec" />
-      <LibFiles Include="$(OutputPath)*.dll" />
+      <LibFiles Include="$(TargetPath)" />
     </ItemGroup>
     <Copy SourceFiles="@(NuGetFiles)" DestinationFolder="$(IntermediateOutputPath)nuget" />
     <Copy SourceFiles="@(LibFiles)" DestinationFolder="$(IntermediateOutputPath)nuget\lib" />
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(IntermediateOutputPath)nuget" MetadataAssembly="$(OutputPath)$(AssemblyName).dll" TargetDir="$(OutputPath)" />
+    <NuCake.CreatePackage ReferenceDirectory="$(IntermediateOutputPath)nuget" ReferenceLibrary="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(OutputPath)" />
     <ItemGroup>
       <Nupkgs Include="$(OutputPath)*.nupkg" />
     </ItemGroup>
@@ -135,5 +135,6 @@
     <WriteLinesToFile File="$(IntermediateOutputPath)$(MSBuildProjectFile).FileListAbsolute.txt" Lines="@(NuGetFiles->'$(MSBuildProjectDirectory)\$(IntermediateOutputPath)nuget\%(Filename)%(Extension)')" />
     <WriteLinesToFile File="$(IntermediateOutputPath)$(MSBuildProjectFile).FileListAbsolute.txt" Lines="@(LibFiles->'$(MSBuildProjectDirectory)\$(IntermediateOutputPath)nuget\lib\%(Filename)%(Extension)')" />
     <WriteLinesToFile File="$(IntermediateOutputPath)$(MSBuildProjectFile).FileListAbsolute.txt" Lines="@(Nupkgs->'$(MSBuildProjectDirectory)\$(OutputPath)%(Filename)%(Extension)')" />
+    <WriteLinesToFile File="$(IntermediateOutputPath)$(MSBuildProjectFile).FileListAbsolute.txt" Lines="@(Nupkgs->'$(SolutionDir)output\%(Filename)%(Extension)')" />
   </Target>
 </Project>

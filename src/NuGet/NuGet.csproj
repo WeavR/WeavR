@@ -42,7 +42,7 @@
   </Target>
   <Target Name="Build" DependsOnTargets="NuGetBuild;CopyOutput" />
   <Target Name="Rebuild" DependsOnTargets="Clean;Build" />
-  <UsingTask TaskName="PepitaPackage.CreatePackageTask" AssemblyFile="$(SolutionDir)tools\PepitaPackage.dll" />
+  <UsingTask TaskName="NuCake.CreatePackage" AssemblyFile="$(SolutionDir)tools\NuCake.dll" />
   <Target Name="NuGetBuild">
     <ItemGroup>
       <NuGetFiles Include="$(SolutionDir)src\WeavR\bin\$(ConfigurationName)\*.dll" Exclude="$(SolutionDir)src\WeavR\bin\$(ConfigurationName)\*.vshost.*" />
@@ -52,7 +52,7 @@
     <Copy SourceFiles="@(NuGetFiles)" DestinationFolder="$(IntermediateOutputPath)nuget" />
     <Copy SourceFiles="@(NuSpecFiles)" DestinationFolder="$(IntermediateOutputPath)nuget" />
     <Copy SourceFiles="@(BuildFiles)" DestinationFolder="$(IntermediateOutputPath)nuget\build" />
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(IntermediateOutputPath)nuget" MetadataAssembly="$(SolutionDir)src\WeavR\bin\$(ConfigurationName)\WeavR.exe" TargetDir="$(OutputPath)" />
+    <NuCake.CreatePackage ReferenceDirectory="$(IntermediateOutputPath)nuget" ReferenceLibrary="$(SolutionDir)src\WeavR\bin\$(ConfigurationName)\WeavR.exe" DestinationFolder="$(OutputPath)" />
   </Target>
   <Target Name="CopyOutput" DependsOnTargets="NuGetBuild">
     <ItemGroup>
