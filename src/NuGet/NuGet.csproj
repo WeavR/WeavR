@@ -33,10 +33,13 @@
   <ItemGroup>
     <NuSpecFiles Include="WeavR.nuspec" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="WeaversConfig.xml" />
+  </ItemGroup>
   <Target Name="Clean">
     <ItemGroup>
       <FilesToClean Include="$(OutputPath)**\*.*" />
-      <FilesToClean Include="$(IntermediateOutputPath)**\*.*" />      
+      <FilesToClean Include="$(IntermediateOutputPath)**\*.*" />
     </ItemGroup>
     <Delete Files="@(FilesToClean)" />
   </Target>
@@ -52,6 +55,7 @@
     <Copy SourceFiles="@(NuGetFiles)" DestinationFolder="$(IntermediateOutputPath)nuget" />
     <Copy SourceFiles="@(NuSpecFiles)" DestinationFolder="$(IntermediateOutputPath)nuget" />
     <Copy SourceFiles="@(BuildFiles)" DestinationFolder="$(IntermediateOutputPath)nuget\build" />
+    <Copy SourceFiles="@(Content)" DestinationFolder="$(IntermediateOutputPath)nuget\content" />
     <NuCake.CreatePackage ReferenceDirectory="$(IntermediateOutputPath)nuget" ReferenceLibrary="$(SolutionDir)src\WeavR\bin\$(ConfigurationName)\WeavR.exe" DestinationFolder="$(OutputPath)" />
   </Target>
   <Target Name="CopyOutput" DependsOnTargets="NuGetBuild">
