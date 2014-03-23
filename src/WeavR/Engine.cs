@@ -121,23 +121,9 @@ namespace WeavR
             }
         }
 
-        public IEnumerable<string> FindWeaverConfigs(string projectDirectory)
+        private IEnumerable<string> FindWeaverConfigs(string projectDirectory)
         {
             var foundConfigs = new List<string>();
-
-            //var fodyDirConfigFilePath = Path.Combine(AssemblyLocation.CurrentDirectory(), "WeaversConfig.xml");
-            //if (File.Exists(fodyDirConfigFilePath))
-            //{
-            //    ConfigFiles.Add(fodyDirConfigFilePath);
-            //    Logger.LogInfo(string.Format("Found path to weavers file '{0}'.", fodyDirConfigFilePath));
-            //}
-
-            //var solutionConfigFilePath = Path.Combine(SolutionDirectoryPath, "WeaversConfig.xml");
-            //if (File.Exists(solutionConfigFilePath))
-            //{
-            //    ConfigFiles.Add(solutionConfigFilePath);
-            //    Logger.LogInfo(string.Format("Found path to weavers file '{0}'.", solutionConfigFilePath));
-            //}
 
             var projectConfigFilePath = Path.Combine(projectDirectory, "WeaversConfig.xml");
             if (File.Exists(projectConfigFilePath))
@@ -155,7 +141,7 @@ namespace WeavR
             return foundConfigs;
         }
 
-        public IEnumerable<string> FindWeavers(string solutionDirectory)
+        private IEnumerable<string> FindWeavers(string solutionDirectory)
         {
             var directories = new List<string>();
             directories.Add(Path.Combine(solutionDirectory, "Packages"));
@@ -168,7 +154,7 @@ namespace WeavR
                 .SelectMany(d => Directory.EnumerateFiles(d, "*.WeavR.dll", SearchOption.AllDirectories));
         }
 
-        public static string GetPackagePath(string nugetConfigPath)
+        private static string GetPackagePath(string nugetConfigPath)
         {
             if (File.Exists(nugetConfigPath))
             {

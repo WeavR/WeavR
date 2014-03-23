@@ -2,9 +2,8 @@ using System;
 using System.Linq;
 using System.Xml.Linq;
 using Microsoft.Cci.MutableCodeModel;
-using WeavR.Common;
 
-namespace WeavR.Base
+namespace WeavR.Common
 {
     public abstract class Weaver
     {

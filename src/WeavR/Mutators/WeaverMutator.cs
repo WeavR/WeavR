@@ -3,20 +3,19 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Microsoft.Cci.MutableCodeModel;
-using WeavR.Base;
 using WeavR.Common;
 
 namespace WeavR.Mutators
 {
     public class WeaverMutator : Mutator
     {
-        private readonly string assemblyName;
+        private readonly string weaverName;
         private readonly Weaver weaver;
 
         public WeaverMutator(LoggerContext logger, string assemblyPath)
         {
-            assemblyName = Path.GetFileNameWithoutExtension(assemblyPath);
-            assemblyName = assemblyName.Remove(assemblyName.Length - ".WeavR".Length);
+            weaverName = Path.GetFileNameWithoutExtension(assemblyPath);
+            weaverName = weaverName.Remove(weaverName.Length - ".WeavR".Length);
 
             // TODO Load in separate app domain
             var weaverAssembly = System.Reflection.Assembly.LoadFile(assemblyPath);
@@ -25,12 +24,12 @@ namespace WeavR.Mutators
             var weaverType = weaverAssembly.GetType("ModuleWeaver");
             if (weaverType == null)
             {
-                logger.LogError("Cannot find 'ModuleWeaver' type in weaver '{0}'.", assemblyName);
+                logger.LogError("Cannot find 'ModuleWeaver' type in weaver '{0}'.", weaverName);
                 return;
             }
 
             weaver = (Weaver)Activator.CreateInstance(weaverType);
-            weaver.Logger = logger.CreateSubContext(assemblyName);
+            weaver.Logger = logger.CreateSubContext(weaverName);
         }
 
         public void Configure(XElement config)
@@ -40,7 +39,7 @@ namespace WeavR.Mutators
 
         public override string Name
         {
-            get { return assemblyName; }
+            get { return weaverName; }
         }
 
         public override void Mutate(Assembly assembly)

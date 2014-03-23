@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Xml.Linq;
 using Microsoft.Cci.MutableCodeModel;
-using WeavR.Base;
 using WeavR.Common;
 
 public class ModuleWeaver : Weaver
