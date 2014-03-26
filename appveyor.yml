@@ -7,16 +7,6 @@ branches:
     - feature/appveyor
 
 #---------------------------------#
-#    environment configuration    #
-#---------------------------------#
-
-install:
-  # Fix repo so gitversion works
-  - git config remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
-  - git fetch -q
-  - git checkout -qf feature/appveyor
-
-#---------------------------------#
 #       build configuration       #
 #---------------------------------#
 
@@ -27,7 +17,7 @@ build:
   project: WeavR.sln
 
 before_build:
-  - nuget restore
+  - nuget restore -source "https://www.nuget.org/api/v2;https://www.myget.org/F/distantcam"
 
 #---------------------------------#
 #      artifacts configuration    #
@@ -35,13 +25,3 @@ before_build:
 
 artifacts:
   - path: output\*.nupkg
-
-#---------------------------------#
-#     deployment configuration    #
-#---------------------------------#
-
-deploy:
-  provider: NuGet
-  server: https://www.myget.org/F/weavr/api/v2/package
-  api_key:
-    secure: ZsjvLL66BTiQ9u/kEOL40ElyopeSEWPynBjLCoiFWVvFF5qS+KnYMaSQcuLsaYgv
