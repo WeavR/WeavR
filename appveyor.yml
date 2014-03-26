@@ -38,14 +38,3 @@ after_build:
 
 artifacts:
   - path: output\*.nupkg
-
-#---------------------------------#
-#     deployment configuration    #
-#---------------------------------#
-
-#deploy:
-#  provider: NuGet
-#  server: https://www.myget.org/F/weavr/api/v2/
-#  api_key:
-#    secure: vojumGDCfpdh8Vtd/yaww0I+ROJcjS0FdVHAcSNjzWgb+lATZEKjPr/uduXysxIf
-#  artifact: output\*.nupkg
