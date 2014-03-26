@@ -29,6 +29,9 @@ build:
 before_build:
   - nuget restore
 
+after_build:
+  - nuget push output\*.nupkg 7b6f94fd-d004-4888-a8e4-838073330029 -Source https://www.myget.org/F/weavr/api/v2/package
+
 #---------------------------------#
 #      artifacts configuration    #
 #---------------------------------#
@@ -40,9 +43,9 @@ artifacts:
 #     deployment configuration    #
 #---------------------------------#
 
-deploy:
-  provider: NuGet
-  server: https://www.myget.org/F/weavr/api/v2/
-  api_key:
-    secure: vojumGDCfpdh8Vtd/yaww0I+ROJcjS0FdVHAcSNjzWgb+lATZEKjPr/uduXysxIf
-  artifact: output\*.nupkg
+#deploy:
+#  provider: NuGet
+#  server: https://www.myget.org/F/weavr/api/v2/
+#  api_key:
+#    secure: vojumGDCfpdh8Vtd/yaww0I+ROJcjS0FdVHAcSNjzWgb+lATZEKjPr/uduXysxIf
+#  artifact: output\*.nupkg
