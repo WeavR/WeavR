@@ -1,0 +1,48 @@
+#---------------------------------#
+#      general configuration      #
+#---------------------------------#
+
+branches:
+  only:
+    - feature/appveyor
+
+#---------------------------------#
+#    environment configuration    #
+#---------------------------------#
+
+install:
+  # Fix repo so gitversion works
+  - git config remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
+  - git fetch -q
+  - git checkout -qf feature/appveyor
+
+#---------------------------------#
+#       build configuration       #
+#---------------------------------#
+
+platform: AnyCPU
+configuration: Release
+
+build:
+  project: WeavR.sln
+
+before_build:
+  - nuget restore
+
+#---------------------------------#
+#      artifacts configuration    #
+#---------------------------------#
+
+artifacts:
+  - path: output\*.nupkg
+
+#---------------------------------#
+#     deployment configuration    #
+#---------------------------------#
+
+deploy:
+  provider: NuGet
+  server: https://www.myget.org/F/weavr/api/v2/
+  api_key:
+    secure: vojumGDCfpdh8Vtd/yaww0I+ROJcjS0FdVHAcSNjzWgb+lATZEKjPr/uduXysxIf
+  artifact: output\*.nupkg
