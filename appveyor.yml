@@ -24,7 +24,7 @@ artifacts:
 
 deploy:
   provider: NuGet
-  server: https://www.myget.org/F/weavr/api/v2/
+  server: https://www.myget.org/F/weavr/api/v2/package
   api_key:
     secure: ZsjvLL66BTiQ9u/kEOL40ElyopeSEWPynBjLCoiFWVvFF5qS+KnYMaSQcuLsaYgv
   on:
