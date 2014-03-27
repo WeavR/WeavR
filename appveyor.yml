@@ -1,0 +1,27 @@
+#---------------------------------#
+#      general configuration      #
+#---------------------------------#
+
+branches:
+  only:
+    - feature/appveyor
+
+#---------------------------------#
+#       build configuration       #
+#---------------------------------#
+
+platform: AnyCPU
+configuration: Release
+
+build:
+  project: WeavR.sln
+
+before_build:
+  - nuget restore -source "https://www.nuget.org/api/v2;https://www.myget.org/F/distantcam"
+
+#---------------------------------#
+#      artifacts configuration    #
+#---------------------------------#
+
+artifacts:
+  - path: output\*.nupkg
