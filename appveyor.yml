@@ -17,8 +17,7 @@ build:
   project: WeavR.sln
 
 before_build:
-  - nuget restore
-  - nuget restore -source "https://www.myget.org/F/distantcam"
+  - nuget restore -source "https://www.nuget.org/api/v2;https://www.myget.org/F/distantcam"
 
 #---------------------------------#
 #      artifacts configuration    #
