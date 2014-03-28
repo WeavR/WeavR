@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using AppDomainToolkit;
 using Microsoft.Build.Framework;
@@ -7,28 +8,9 @@ using Microsoft.Build.Utilities;
 
 namespace WeavR.Tasks
 {
-    public class RemoteWorker : MarshalByRefObject
-    {
-        //private readonly WeavR.Common.Logger logger;
-
-        public RemoteWorker()//WeavR.Common.Logger logger)
-        {
-            //this.logger = logger;
-        }
-
-        public bool Execute()
-        {
-            //logger.LogInfo("Doing some task in " + AppDomain.CurrentDomain.FriendlyName, "", "WeavR", Common.MessageImportance.High);
-
-            return true;
-        }
-    }
-
     public class Weave : Task
     {
         private readonly static Dictionary<string, AppDomainContext> solutionDomains = new Dictionary<string, AppDomainContext>(StringComparer.OrdinalIgnoreCase);
-
-        private static readonly Random rng = new Random();
 
         [Required]
         public ITaskItem SolutionDir { get; set; }
@@ -60,31 +42,52 @@ namespace WeavR.Tasks
                 if (ChangeAppDomain())
                 {
                     context.Dispose();
-                    context = solutionDomains[SolutionDir.FullPath()] = AppDomainContext.Create();
+                    context = solutionDomains[SolutionDir.FullPath()] = CreateDomain();
                 }
             }
             else
             {
-                context = solutionDomains[SolutionDir.FullPath()] = AppDomainContext.Create();
+                context = solutionDomains[SolutionDir.FullPath()] = CreateDomain();
             }
 
-            var temp = Environment.CurrentDirectory;
-
-            var remoteTask = Remote<RemoteWorker>.CreateProxy(context.Domain);
+            var remoteTask = Remote<AppDomainWorker>.CreateProxy(context.Domain, logger, CreateConfig());
 
             return remoteTask.RemoteObject.Execute() && !logger.HasLoggedError;
         }
 
         private bool ChangeAppDomain()
         {
-            var dump = rng.Next() % 2 == 0;
+            // TODO Logic to decide to dump the appdomain and go again
+            return false;
+        }
 
-            if (dump)
+        private AppDomainContext CreateDomain()
+        {
+            var appDomainSetup = new AppDomainSetup
             {
-                this.BuildEngine.LogMessageEvent(new BuildMessageEventArgs("Dumping appdomain", "", "WeavR", MessageImportance.High));
-            }
+                ApplicationBase = Path.GetDirectoryName(GetType().Assembly.Location)
+            };
+            return AppDomainContext.Create(appDomainSetup);
+        }
 
-            return dump;
+        private TaskConfig CreateConfig()
+        {
+            return new TaskConfig
+            {
+                SolutionDir = SolutionDir.FullPath(),
+                ProjectDirectory = ProjectDirectory.FullPath(),
+                IntermediateDir = IntermediateDir.FullPath(),
+
+                AssemblyPath = AssemblyPath.FullPath(),
+
+                References = References.IgnoreNull().Select(r => r.FullPath()).ToArray(),
+                ReferenceCopyLocalPaths = ReferenceCopyLocalPaths.IgnoreNull().Select(r => r.FullPath()).ToArray(),
+
+                KeyFilePath = KeyFilePath.FullPath(),
+                SignAssembly = SignAssembly,
+
+                DefineConstants = DefineConstants.Split(';')
+            };
         }
     }
 }

@@ -46,7 +46,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppDomainWorker.cs" />
     <Compile Include="BuildLogger.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="TaskConfig.cs" />
     <Compile Include="TaskItemExtensions.cs" />
     <Compile Include="Weave.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
