@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using WeavR.Common;
+using WeavR.Logging;
 
 namespace WeavR.Tasks
 {
@@ -17,7 +17,7 @@ namespace WeavR.Tasks
 
         public bool Execute()
         {
-            logger.LogInfo("Doing some task in " + AppDomain.CurrentDomain.FriendlyName, "", "WeavR", Common.MessageImportance.High);
+            logger.LogInfo("Doing some task in " + AppDomain.CurrentDomain.FriendlyName, "", "WeavR", MessageImportance.High);
 
             return true;
         }

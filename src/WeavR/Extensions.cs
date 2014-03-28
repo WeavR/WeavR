@@ -6,6 +6,12 @@ namespace WeavR
 {
     public static class Extensions
     {
+        public static IEnumerable<TSource> IgnoreNull<TSource>(this IEnumerable<TSource> source)
+        {
+            if (source == null) return new TSource[0];
+            return source;
+        }
+
         public static IEnumerable<TSource> WhereWithActions<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate, Action<TSource> onHit = null, Action<TSource> onMiss = null)
         {
             if (source == null)

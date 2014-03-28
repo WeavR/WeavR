@@ -117,12 +117,15 @@
     <Compile Include="Logging\ColourConsoleLogger.cs" />
     <Compile Include="Logging\ConsoleLogger.cs" />
     <Compile Include="Engine.cs" />
+    <Compile Include="Logging\Logger.cs" />
+    <Compile Include="Logging\LoggerContext.cs" />
     <Compile Include="Mutators\Mutator.cs" />
     <Compile Include="Mutators\ProcessedFlagMutator.cs" />
     <Compile Include="Mutators\WeaverMutator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Logging\StringLogger.cs" />
+    <Compile Include="TaskConfig.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

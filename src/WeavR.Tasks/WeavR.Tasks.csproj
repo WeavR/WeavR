@@ -48,8 +48,6 @@
   <ItemGroup>
     <Compile Include="AppDomainWorker.cs" />
     <Compile Include="BuildLogger.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="TaskConfig.cs" />
     <Compile Include="TaskItemExtensions.cs" />
     <Compile Include="Weave.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -61,6 +59,10 @@
     <ProjectReference Include="..\WeavR.Common\WeavR.Common.csproj">
       <Project>{9edb8911-588c-4e85-a083-daf7d7d4c3b5}</Project>
       <Name>WeavR.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WeavR\WeavR.csproj">
+      <Project>{5b822908-9a52-4c81-9c8b-2fa0470ccba3}</Project>
+      <Name>WeavR</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

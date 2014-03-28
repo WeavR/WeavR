@@ -7,7 +7,7 @@ namespace WeavR.Common
 {
     public abstract class Weaver
     {
-        public LoggerContext Logger { get; set; }
+        public ILoggerContext Logger { get; set; }
 
         public abstract void Configure(XElement config);
 

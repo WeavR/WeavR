@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace WeavR.Common
+namespace WeavR.Logging
 {
     [Serializable]
     public enum MessageImportance

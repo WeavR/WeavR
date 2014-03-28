@@ -9,7 +9,7 @@ namespace WeavR.Mutators
     public abstract class Mutator
     {
         public IMetadataHost Host { get; set; }
-        public LoggerContext Logger { get; set; }
+        public ILoggerContext Logger { get; set; }
 
         public abstract string Name { get; }
 

@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace WeavR.Tasks
+namespace WeavR
 {
     [Serializable]
     public class TaskConfig

@@ -32,7 +32,7 @@ namespace WeavR
             public string ProjectDirectory { get { return projectDirectory; } }
             public string TargetPath { get { return targetPath; } }
 
-            public bool Verify(LoggerContext logger)
+            public bool Verify(ILoggerContext logger)
             {
                 var result = true;
 
@@ -53,9 +53,9 @@ namespace WeavR
         }
 
         private readonly IMetadataHost host;
-        private readonly LoggerContext logger;
+        private readonly ILoggerContext logger;
 
-        private Engine(LoggerContext logger, IMetadataHost host)
+        private Engine(ILoggerContext logger, IMetadataHost host)
         {
             this.logger = logger;
             this.host = host;
@@ -193,7 +193,7 @@ namespace WeavR
             return null;
         }
 
-        public static void Process(LoggerContext logger, AssemblyDetails assemblyDetails, string tempFolder = null)
+        public static void Process(ILoggerContext logger, AssemblyDetails assemblyDetails, string tempFolder = null)
         {
             if (!assemblyDetails.Verify(logger))
                 return;
