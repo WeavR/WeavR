@@ -5,6 +5,7 @@ using WeavR.Common;
 
 namespace WeavR.Tasks
 {
+    [Serializable]
     public class BuildLogger : Logger
     {
         private readonly IBuildEngine buildEngine;

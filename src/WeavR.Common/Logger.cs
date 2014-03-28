@@ -11,6 +11,7 @@ namespace WeavR.Common
         Low = 2,
     }
 
+    [Serializable]
     public abstract class Logger
     {
         private bool hasLoggedError;
