@@ -5,6 +5,7 @@ using System.Linq;
 using AppDomainToolkit;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using WeavR.Logging;
 
 namespace WeavR.Tasks
 {
@@ -34,25 +35,37 @@ namespace WeavR.Tasks
 
         public override bool Execute()
         {
-            var logger = new BuildLogger(BuildEngine);
+            var rawLogger = new BuildLogger(BuildEngine);
 
-            AppDomainContext context;
-            if (solutionDomains.TryGetValue(SolutionDir.FullPath(), out context))
+            var logger = new LoggerContext(rawLogger, "WeavR");
+
+            try
             {
-                if (ChangeAppDomain())
+                AppDomainContext context;
+                if (solutionDomains.TryGetValue(SolutionDir.FullPath(), out context))
                 {
-                    context.Dispose();
+                    if (ChangeAppDomain())
+                    {
+                        logger.LogInfo("Recreating AppDomain as weavers have changed.");
+                        context.Dispose();
+                        context = solutionDomains[SolutionDir.FullPath()] = CreateDomain();
+                    }
+                }
+                else
+                {
+                    logger.LogInfo("Creating AppDomain for solution.");
                     context = solutionDomains[SolutionDir.FullPath()] = CreateDomain();
                 }
+
+                var remoteTask = Remote<AppDomainWorker>.CreateProxy(context.Domain, logger, CreateConfig());
+
+                return remoteTask.RemoteObject.Execute() && !logger.HasLoggedError;
             }
-            else
+            catch (Exception ex)
             {
-                context = solutionDomains[SolutionDir.FullPath()] = CreateDomain();
+                logger.LogException(ex);
+                return false;
             }
-
-            var remoteTask = Remote<AppDomainWorker>.CreateProxy(context.Domain, logger, CreateConfig());
-
-            return remoteTask.RemoteObject.Execute() && !logger.HasLoggedError;
         }
 
         private bool ChangeAppDomain()

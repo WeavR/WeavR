@@ -7,9 +7,9 @@ namespace WeavR.Tasks
     public class AppDomainWorker : MarshalByRefObject
     {
         private readonly TaskConfig config;
-        private readonly Logger logger;
+        private readonly LoggerContext logger;
 
-        public AppDomainWorker(Logger logger, TaskConfig config)
+        public AppDomainWorker(LoggerContext logger, TaskConfig config)
         {
             this.config = config;
             this.logger = logger;
@@ -17,7 +17,7 @@ namespace WeavR.Tasks
 
         public bool Execute()
         {
-            logger.LogInfo("Doing some task in " + AppDomain.CurrentDomain.FriendlyName, "", "WeavR", MessageImportance.High);
+            logger.LogInfo("Doing some task in {0}", AppDomain.CurrentDomain.FriendlyName);
 
             return true;
         }

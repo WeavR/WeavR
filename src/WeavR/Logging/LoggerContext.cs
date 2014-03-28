@@ -5,6 +5,7 @@ using WeavR.Common;
 
 namespace WeavR.Logging
 {
+    [Serializable]
     public class LoggerContext : ILoggerContext
     {
         private readonly Logger logger;
@@ -15,7 +16,7 @@ namespace WeavR.Logging
         {
             this.logger = logger;
             this.sender = sender;
-            this.subcategory = "";
+            this.subcategory = sender;
         }
 
         private LoggerContext(Logger logger, string sender, string subcategory)
