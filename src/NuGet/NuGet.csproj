@@ -64,4 +64,8 @@
     </ItemGroup>
     <Copy SourceFiles="@(Nupkgs)" DestinationFolder="$(SolutionDir)output" />
   </Target>
+  <Target Name="GetNativeManifest">
+  </Target>
+  <Target Name="GetCopyToOutputDirectoryItems">
+  </Target>
 </Project>
