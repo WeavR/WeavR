@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using WeavR.Common;
 
-namespace WeavR.Common
+namespace WeavR.Logging
 {
-    public class LoggerContext
+    [Serializable]
+    public class LoggerContext : ILoggerContext
     {
         private readonly Logger logger;
         private readonly string sender;
@@ -14,7 +16,7 @@ namespace WeavR.Common
         {
             this.logger = logger;
             this.sender = sender;
-            this.subcategory = "";
+            this.subcategory = sender;
         }
 
         private LoggerContext(Logger logger, string sender, string subcategory)
@@ -39,7 +41,7 @@ namespace WeavR.Common
             logger.Reset();
         }
 
-        public LoggerContext CreateSubContext(string subcategory)
+        public ILoggerContext CreateSubContext(string subcategory)
         {
             return new LoggerContext(logger, sender, subcategory);
         }

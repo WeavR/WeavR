@@ -1,10 +1,11 @@
 using System;
 using System.Linq;
 using Microsoft.Build.Framework;
-using WeavR.Common;
+using WeavR.Logging;
 
 namespace WeavR.Tasks
 {
+    [Serializable]
     public class BuildLogger : Logger
     {
         private readonly IBuildEngine buildEngine;
@@ -14,7 +15,7 @@ namespace WeavR.Tasks
             this.buildEngine = buildEngine;
         }
 
-        protected override void DoLogInfo(string subcategory, string code, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, string helpKeyword, string senderName, Common.MessageImportance importance, DateTime eventTimestamp, params object[] messageArgs)
+        protected override void DoLogInfo(string subcategory, string code, string file, int lineNumber, int columnNumber, int endLineNumber, int endColumnNumber, string message, string helpKeyword, string senderName, WeavR.Logging.MessageImportance importance, DateTime eventTimestamp, params object[] messageArgs)
         {
             buildEngine.LogMessageEvent(new BuildMessageEventArgs(subcategory, code, file, lineNumber, columnNumber, endLineNumber, endColumnNumber, message, helpKeyword, senderName, (Microsoft.Build.Framework.MessageImportance)importance, eventTimestamp, messageArgs));
         }

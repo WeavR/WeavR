@@ -10,18 +10,21 @@ namespace WeavR.Tasks
         [DebuggerStepThrough]
         public static string FullPath(this ITaskItem item)
         {
+            if (item == null) return "";
             return item.GetMetadata("FullPath");
         }
 
         [DebuggerStepThrough]
         public static string Filename(this ITaskItem item)
         {
+            if (item == null) return "";
             return item.GetMetadata("Filename");
         }
 
         [DebuggerStepThrough]
         public static string Extension(this ITaskItem item)
         {
+            if (item == null) return "";
             return item.GetMetadata("Extension");
         }
     }

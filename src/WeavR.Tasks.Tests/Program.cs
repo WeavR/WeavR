@@ -33,6 +33,8 @@ namespace WeavR.Tasks.Tests
 
         private static void Write(string message)
         {
+            message = message.Replace("\\r", "");
+
             Console.Out.Write(message);
 
             message = message.TrimEnd('\r', '\n');

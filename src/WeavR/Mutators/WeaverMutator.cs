@@ -12,7 +12,7 @@ namespace WeavR.Mutators
         private readonly string weaverName;
         private readonly Weaver weaver;
 
-        public WeaverMutator(LoggerContext logger, string assemblyPath)
+        public WeaverMutator(ILoggerContext logger, string assemblyPath)
         {
             weaverName = Path.GetFileNameWithoutExtension(assemblyPath);
             weaverName = weaverName.Remove(weaverName.Length - ".WeavR".Length);

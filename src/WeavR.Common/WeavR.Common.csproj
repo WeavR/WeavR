@@ -35,9 +35,8 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Logger.cs" />
+    <Compile Include="ILoggerContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="LoggerContext.cs" />
     <Compile Include="Weaver.cs" />
   </ItemGroup>
   <ItemGroup>

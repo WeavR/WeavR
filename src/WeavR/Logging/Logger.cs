@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace WeavR.Common
+namespace WeavR.Logging
 {
     [Serializable]
     public enum MessageImportance
@@ -11,6 +11,7 @@ namespace WeavR.Common
         Low = 2,
     }
 
+    [Serializable]
     public abstract class Logger
     {
         private bool hasLoggedError;
