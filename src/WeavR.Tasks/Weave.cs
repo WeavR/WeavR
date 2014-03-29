@@ -11,6 +11,7 @@ namespace WeavR.Tasks
     public class Weave : Task
     {
         private readonly static Dictionary<string, AppDomain> solutionDomains = new Dictionary<string, AppDomain>(StringComparer.OrdinalIgnoreCase);
+        private readonly static Dictionary<string, ChangeTracker> changeTrackers = new Dictionary<string, ChangeTracker>(StringComparer.OrdinalIgnoreCase);
 
         [Required]
         public ITaskItem SolutionDir { get; set; }
@@ -35,30 +36,11 @@ namespace WeavR.Tasks
         public override bool Execute()
         {
             var rawLogger = new BuildLogger(BuildEngine);
-
             var logger = new LoggerContext(rawLogger, "WeavR");
 
             try
             {
-                AppDomain context;
-                if (solutionDomains.TryGetValue(SolutionDir.FullPath(), out context))
-                {
-                    if (ChangeAppDomain())
-                    {
-                        logger.LogInfo("Recreating AppDomain as weavers have changed.");
-                        AppDomain.Unload(context);
-                        context = solutionDomains[SolutionDir.FullPath()] = CreateDomain();
-                    }
-                }
-                else
-                {
-                    logger.LogInfo("Creating AppDomain for solution.");
-                    context = solutionDomains[SolutionDir.FullPath()] = CreateDomain();
-                }
-
-                var remoteTask = CreateProxy<AppDomainWorker>(context, logger, CreateConfig());
-
-                return remoteTask.Execute() && !logger.HasLoggedError;
+                return Inner(logger);
             }
             catch (Exception ex)
             {
@@ -67,17 +49,46 @@ namespace WeavR.Tasks
             }
         }
 
-        private bool ChangeAppDomain()
+        private bool Inner(LoggerContext logger)
         {
-            // TODO Logic to decide to dump the appdomain and go again
-            return false;
+            AppDomain context;
+            if (solutionDomains.TryGetValue(SolutionDir.FullPath(), out context))
+            {
+                if (ChangeAppDomain(logger))
+                {
+                    logger.LogInfo("Recreating AppDomain as weavers have changed.");
+                    AppDomain.Unload(context);
+                    context = solutionDomains[SolutionDir.FullPath()] = CreateDomain();
+                    changeTrackers[SolutionDir.FullPath()] = new ChangeTracker(logger, CreateProjectDetails());
+                }
+                else
+                {
+                    logger.LogInfo("Using existing AppDomain.");
+                }
+            }
+            else
+            {
+                logger.LogInfo("Creating AppDomain for solution.");
+                context = solutionDomains[SolutionDir.FullPath()] = CreateDomain();
+                changeTrackers[SolutionDir.FullPath()] = new ChangeTracker(logger, CreateProjectDetails());
+            }
+
+            var remoteTask = CreateProxy<AppDomainWorker>(context, logger, CreateProjectDetails(), IntermediateDir.FullPath());
+
+            return remoteTask.Execute() && !logger.HasLoggedError;
+        }
+
+        private bool ChangeAppDomain(LoggerContext logger)
+        {
+            return changeTrackers[SolutionDir.FullPath()].FilesChanged();
         }
 
         private AppDomain CreateDomain()
         {
             var appDomainSetup = new AppDomainSetup
             {
-                ApplicationBase = Path.GetDirectoryName(GetType().Assembly.Location)
+                ApplicationBase = Path.GetDirectoryName(GetType().Assembly.Location),
+                ShadowCopyFiles = "true"
             };
             return AppDomain.CreateDomain("WeavR domain for " + SolutionDir.FullPath(), null, appDomainSetup);
         }
@@ -96,14 +107,12 @@ namespace WeavR.Tasks
                 null);
         }
 
-        private TaskConfig CreateConfig()
+        private ProjectDetails CreateProjectDetails()
         {
-            return new TaskConfig
+            return new ProjectDetails
             {
                 SolutionDir = SolutionDir.FullPath(),
                 ProjectDirectory = ProjectDirectory.FullPath(),
-                IntermediateDir = IntermediateDir.FullPath(),
-
                 AssemblyPath = AssemblyPath.FullPath(),
 
                 References = References.IgnoreNull().Select(r => r.FullPath()).ToArray(),

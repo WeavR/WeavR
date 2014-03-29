@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using WeavR.Common;
 using WeavR.Logging;
 
 namespace WeavR
@@ -22,7 +21,12 @@ namespace WeavR
                 return;
             }
 
-            Engine.Process(logger, new Engine.AssemblyDetails(args[0], args[1], args[2]));
+            Engine.Process(logger, new ProjectDetails()
+            {
+                SolutionDir = args[0],
+                ProjectDirectory = args[1],
+                AssemblyPath = args[2]
+            });
         }
     }
 }

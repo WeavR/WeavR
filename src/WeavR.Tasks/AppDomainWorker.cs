@@ -6,20 +6,22 @@ namespace WeavR.Tasks
 {
     public class AppDomainWorker : MarshalByRefObject
     {
-        private readonly TaskConfig config;
+        private readonly ProjectDetails config;
         private readonly LoggerContext logger;
+        private readonly string tempDirectory;
 
-        public AppDomainWorker(LoggerContext logger, TaskConfig config)
+        public AppDomainWorker(LoggerContext logger, ProjectDetails config, string tempDirectory)
         {
             this.config = config;
             this.logger = logger;
+            this.tempDirectory = tempDirectory;
         }
 
         public bool Execute()
         {
-            logger.LogInfo("Doing some task in {0}", AppDomain.CurrentDomain.FriendlyName);
+            Engine.Process(logger, config, tempDirectory);
 
-            return true;
+            return !logger.HasLoggedError;
         }
     }
 }
