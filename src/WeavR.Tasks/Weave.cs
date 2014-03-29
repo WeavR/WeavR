@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using AppDomainToolkit;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using WeavR.Logging;
@@ -11,7 +10,7 @@ namespace WeavR.Tasks
 {
     public class Weave : Task
     {
-        private readonly static Dictionary<string, AppDomainContext> solutionDomains = new Dictionary<string, AppDomainContext>(StringComparer.OrdinalIgnoreCase);
+        private readonly static Dictionary<string, AppDomain> solutionDomains = new Dictionary<string, AppDomain>(StringComparer.OrdinalIgnoreCase);
 
         [Required]
         public ITaskItem SolutionDir { get; set; }
@@ -41,13 +40,13 @@ namespace WeavR.Tasks
 
             try
             {
-                AppDomainContext context;
+                AppDomain context;
                 if (solutionDomains.TryGetValue(SolutionDir.FullPath(), out context))
                 {
                     if (ChangeAppDomain())
                     {
                         logger.LogInfo("Recreating AppDomain as weavers have changed.");
-                        context.Dispose();
+                        AppDomain.Unload(context);
                         context = solutionDomains[SolutionDir.FullPath()] = CreateDomain();
                     }
                 }
@@ -57,9 +56,9 @@ namespace WeavR.Tasks
                     context = solutionDomains[SolutionDir.FullPath()] = CreateDomain();
                 }
 
-                var remoteTask = Remote<AppDomainWorker>.CreateProxy(context.Domain, logger, CreateConfig());
+                var remoteTask = CreateProxy<AppDomainWorker>(context, logger, CreateConfig());
 
-                return remoteTask.RemoteObject.Execute() && !logger.HasLoggedError;
+                return remoteTask.Execute() && !logger.HasLoggedError;
             }
             catch (Exception ex)
             {
@@ -74,13 +73,27 @@ namespace WeavR.Tasks
             return false;
         }
 
-        private AppDomainContext CreateDomain()
+        private AppDomain CreateDomain()
         {
             var appDomainSetup = new AppDomainSetup
             {
                 ApplicationBase = Path.GetDirectoryName(GetType().Assembly.Location)
             };
-            return AppDomainContext.Create(appDomainSetup);
+            return AppDomain.CreateDomain("WeavR domain for " + SolutionDir.FullPath(), null, appDomainSetup);
+        }
+
+        private T CreateProxy<T>(AppDomain domain, params object[] constructorArgs)
+        {
+            var type = typeof(T);
+            return (T)domain.CreateInstanceAndUnwrap(
+                type.Assembly.FullName,
+                type.FullName,
+                false,
+                System.Reflection.BindingFlags.CreateInstance,
+                null,
+                constructorArgs,
+                null,
+                null);
         }
 
         private TaskConfig CreateConfig()
