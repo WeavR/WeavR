@@ -1,4 +1,4 @@
-![Project Icon - A happy looking floating robot](https://raw.githubusercontent.com/WeavR/WeavR/develop/icons/package_icon.png)
+![Project Icon - A happy looking floating robot](https://raw.githubusercontent.com/WeavR/WeavR/master/icons/package_icon.png)
 
 # WeavR [![Build status](https://ci.appveyor.com/api/projects/status/5d4sw9w0b2mv4492)](https://ci.appveyor.com/project/distantcam/weavr)
 
